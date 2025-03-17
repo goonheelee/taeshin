@@ -198,7 +198,7 @@ async function extractLostStolenInfo(imei) {
     try {
       lostInfo = await (async () => {
         const browser = await puppeteerExtra.launch({
-          headless: true,
+          headless: false,
           args: ['--no-sandbox', '--disable-setuid-sandbox'],
           executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined
         });
@@ -230,7 +230,7 @@ async function extractLostStolenInfo(imei) {
 
         // Python OCR 스크립트 호출하여 캡차 텍스트 추출 (필요에 따라 "python3"로 수정)
         const ocrText = await new Promise((resolve, reject) => {
-          exec(`python loststolen_ocr.py ${captchaPath}`, (error, stdout, stderr) => {
+          exec(`python3 loststolen_ocr.py ${captchaPath}`, (error, stdout, stderr) => {
             if (error) {
               console.error(`Python OCR 실행 에러: ${error.message}`);
               return reject(error);
@@ -259,7 +259,7 @@ async function extractLostStolenInfo(imei) {
         await page.waitForSelector('#resultStr, #resultStr2', { timeout: 15000 });
         let resultText = "";
         let resultAttempt = 0;
-        while (resultText === "" && resultAttempt < 1) {
+        while (resultText === "" && resultAttempt < 5) {
           resultAttempt++;
           if (await page.$('#resultStr')) {
             resultText = await page.evaluate(() => document.querySelector('#resultStr').textContent);
