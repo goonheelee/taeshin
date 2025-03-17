@@ -51,8 +51,8 @@ RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/
 # pip 업그레이드 (외부 관리 환경 오류 우회를 위해 --break-system-packages 플래그 추가)
 RUN pip3 install --upgrade pip --break-system-packages
 
-# CPU 버전의 torch와 torchvision 설치 (easyocr 의존성 해결)
-RUN pip3 install torch torchvision --extra-index-url https://download.pytorch.org/whl/cpu
+# CPU 버전의 torch와 torchvision 설치 (버전 명시)
+RUN pip3 install torch==2.0.1 torchvision==0.15.2 --extra-index-url https://download.pytorch.org/whl/cpu
 
 # easyocr 설치
 RUN pip3 install easyocr
@@ -61,7 +61,7 @@ USER node
 
 WORKDIR /app
 
-# 프로젝트 파일 복사 (package.json, package-lock.json)
+# 프로젝트의 package.json과 package-lock.json 파일 복사
 COPY --chown=node package.json .
 COPY --chown=node package-lock.json .
 
@@ -72,7 +72,7 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 # Node.js 의존성 설치
 RUN npm install
 
-# 나머지 애플리케이션 파일 복사
+# 프로젝트의 나머지 파일 복사
 COPY --chown=node . /app
 
 # 컨테이너 시작 시 "npm start"로 애플리케이션 실행
