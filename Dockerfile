@@ -57,6 +57,9 @@ RUN pip3 install torch==2.0.1 torchvision==0.15.2 --extra-index-url https://down
 # easyocr 설치
 RUN pip3 install easyocr --break-system-packages
 
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
+
 USER node
 
 WORKDIR /app
@@ -77,3 +80,4 @@ COPY --chown=node . /app
 
 # 컨테이너 시작 시 "npm start"로 애플리케이션 실행
 CMD ["npm", "start"]
+
