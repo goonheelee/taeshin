@@ -1,4 +1,3 @@
-# Node.js 18 공식 이미지를 베이스로 사용
 FROM node:18
 
 # Puppeteer(Chromium) 실행에 필요한 시스템 라이브러리 및 폰트 설치
@@ -43,30 +42,38 @@ RUN apt-get update && apt-get install -y \
     fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-# Python3 및 pip 설치 (OCR 스크립트 사용을 위해)
+# Python 패키지 컴파일에 필요한 빌드 도구 설치
+RUN apt-get update && apt-get install -y build-essential
+
+# Python3 및 pip 설치
 RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/apt/lists/*
-# easyocr 패키지 설치 (OCR 스크립트에서 사용)
+
+# pip 업그레이드 (최신 버전 사용)
+RUN pip3 install --upgrade pip
+
+# CPU 버전의 torch와 torchvision 설치 (easyocr 의존성 해결)
+RUN pip3 install torch torchvision --extra-index-url https://download.pytorch.org/whl/cpu
+
+# easyocr 설치
 RUN pip3 install easyocr
 
-# 비루트 사용자 "node"로 전환 (기본 이미지에 포함됨)
 USER node
 
-# 작업 디렉토리를 /app으로 설정
 WORKDIR /app
 
-# package.json과 package-lock.json 파일을 복사 (소유자 설정 포함)
+# 프로젝트의 package.json과 package-lock.json 파일 복사
 COPY --chown=node package.json .
 COPY --chown=node package-lock.json .
 
-# Puppeteer가 자동 Chromium 다운로드를 건너뛰고, Docker에서 설치된 Chromium을 사용하도록 환경 변수 설정
+# Puppeteer가 Docker에서 설치된 Chromium을 사용하도록 환경 변수 설정
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
 # Node.js 의존성 설치
 RUN npm install
 
-# 나머지 애플리케이션 코드 복사
+# 프로젝트의 나머지 파일 복사
 COPY --chown=node . /app
 
-# 컨테이너 시작 시 npm start로 애플리케이션 실행
+# 컨테이너 시작 시 "npm start"로 애플리케이션 실행
 CMD ["npm", "start"]
