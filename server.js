@@ -239,7 +239,10 @@ async function extractLostStolenInfo(imei) {
       
       // 약관 동의 및 폼 값 입력
       await page.waitForSelector('#chkAgree', { timeout: 10000 });
-      await page.click('#chkAgree');
+      await page.evaluate(() => {
+        document.querySelector('#chkAgree').click();
+      });
+      
       await page.evaluate((imei) => {
         document.querySelector('#imei').value = imei;
       }, imei);
