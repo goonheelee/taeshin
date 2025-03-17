@@ -112,7 +112,7 @@ app.get('/api/lostInfo', isAuthenticated, async (req, res) => {
 async function extractProductInfo(imei) {
   let attempts = 0;
   let result = null;
-  while (attempts < 5 && !result) {
+  while (attempts < 1 && !result) {
     attempts++;
     try {
       result = await (async () => {
@@ -193,7 +193,7 @@ async function extractProductInfo(imei) {
 async function extractLostStolenInfo(imei) {
   let attempts = 0;
   let lostInfo = null;
-  while (attempts < 5 && !lostInfo) {
+  while (attempts < 1 && !lostInfo) {
     attempts++;
     try {
       lostInfo = await (async () => {
