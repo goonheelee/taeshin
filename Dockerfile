@@ -48,14 +48,14 @@ RUN apt-get update && apt-get install -y build-essential
 # Python3 및 pip 설치
 RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/apt/lists/*
 
-# pip 업그레이드 (외부 관리 환경 오류 우회를 위해 --break-system-packages 플래그 추가)
+# pip 업그레이드 (시스템 제한 우회를 위해 --break-system-packages 추가)
 RUN pip3 install --upgrade pip --break-system-packages
 
-# CPU 버전의 torch와 torchvision 설치 (버전 명시)
-RUN pip3 install torch==2.0.1 torchvision==0.15.2 --extra-index-url https://download.pytorch.org/whl/cpu
+# CPU 버전의 torch와 torchvision 설치 (버전을 명시하고 --break-system-packages 추가)
+RUN pip3 install torch==2.0.1 torchvision==0.15.2 --extra-index-url https://download.pytorch.org/whl/cpu --break-system-packages
 
 # easyocr 설치
-RUN pip3 install easyocr
+RUN pip3 install easyocr --break-system-packages
 
 USER node
 
