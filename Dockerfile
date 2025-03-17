@@ -51,20 +51,23 @@ RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/
 # pip 업그레이드 (시스템 제한 우회를 위해 --break-system-packages 추가)
 RUN pip3 install --upgrade pip --break-system-packages
 
+# 안정적인 NumPy 1.x 버전 설치 (NumPy 2.x와의 호환성 문제 해결)
+RUN pip3 install numpy==1.24.3 --break-system-packages
+
 # CPU 버전의 torch와 torchvision 설치 (버전을 명시하고 --break-system-packages 추가)
 RUN pip3 install torch==2.0.1 torchvision==0.15.2 --extra-index-url https://download.pytorch.org/whl/cpu --break-system-packages
 
 # easyocr 설치
 RUN pip3 install easyocr --break-system-packages
 
+# python 명령어를 python3로 연결 (혹시 코드 어딘가 python을 호출하는 경우 대비)
 RUN ln -s /usr/bin/python3 /usr/bin/python
-
 
 USER node
 
 WORKDIR /app
 
-# 프로젝트의 package.json과 package-lock.json 파일 복사
+# package.json과 package-lock.json 복사
 COPY --chown=node package.json .
 COPY --chown=node package-lock.json .
 
@@ -78,6 +81,5 @@ RUN npm install
 # 프로젝트의 나머지 파일 복사
 COPY --chown=node . /app
 
-# 컨테이너 시작 시 "npm start"로 애플리케이션 실행
+# 컨테이너 시작 시 "npm start"로 애플리케이션 실행 (package.json의 start 스크립트가 node server.js로 정의되어 있다고 가정)
 CMD ["npm", "start"]
-
