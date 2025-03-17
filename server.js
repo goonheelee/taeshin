@@ -193,7 +193,7 @@ async function extractProductInfo(imei) {
 async function extractLostStolenInfo(imei) {
   let attempts = 0;
   let lostInfo = null;
-  while (attempts < 1 && !lostInfo) {
+  while (attempts < 5 && !lostInfo) {
     attempts++;
     try {
       lostInfo = await (async () => {
@@ -259,7 +259,7 @@ async function extractLostStolenInfo(imei) {
         await page.waitForSelector('#resultStr, #resultStr2', { timeout: 15000 });
         let resultText = "";
         let resultAttempt = 0;
-        while (resultText === "" && resultAttempt < 5) {
+        while (resultText === "" && resultAttempt < 1) {
           resultAttempt++;
           if (await page.$('#resultStr')) {
             resultText = await page.evaluate(() => document.querySelector('#resultStr').textContent);
